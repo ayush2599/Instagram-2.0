@@ -145,7 +145,7 @@ function Post({ id, username, userImage, img, caption, timestamp }) {
         <img
           src={img}
           alt=""
-          className=" object-center object-cover max-h-[700px] w-full"
+          className=" object-top object-cover max-h-[700px] w-full"
           onDoubleClick={likePost}
         />
       </div>
@@ -163,7 +163,7 @@ function Post({ id, username, userImage, img, caption, timestamp }) {
         <BookmarkIcon className="btn" />
       </div>
 
-      <p className="px-5 py-5 truncate">
+      <p className="px-5 pt-5 pb-2 truncate">
         {likes.length > 0 && likes.length < 2 && (
           <p className="font-bold mb-1">{likes.length} like</p>
         )}
@@ -176,7 +176,7 @@ function Post({ id, username, userImage, img, caption, timestamp }) {
       </p>
 
       {comments.length > 0 && (
-        <div className="ml-8 h-20 overflow-y-scroll scrollbar-thumb-black scrollbar-thin">
+        <div className="ml-8 min-h-10 max-h-20 overflow-y-scroll scrollbar-thumb-black scrollbar-thin">
           {comments.map((comment) => (
             <div
               key={comment.id}
@@ -192,8 +192,9 @@ function Post({ id, username, userImage, img, caption, timestamp }) {
                 </span>
                 {comment.data().comment}
               </p>
-              <p>
-                <Moment fromNow className="pr-5 text-xs">
+              <p className="grid text-right mr-5 w-fit">
+                  <DotsHorizontalIcon className="h-5 ml-[80%]"/>
+                <Moment fromNow className="text-xs">
                   {comment.data().timestamp?.toDate()}
                 </Moment>
               </p>
@@ -202,7 +203,7 @@ function Post({ id, username, userImage, img, caption, timestamp }) {
         </div>
       )}
 
-      <div className=" text-gray-500 text-xs my-5 mx-5">
+      <div className=" text-gray-500 text-xs my-2 mx-5">
         <Moment fromNow>{timestamp?.toDate()}</Moment>
       </div>
 
