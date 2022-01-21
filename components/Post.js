@@ -110,6 +110,11 @@ function Post({ id, username, userImage, img, caption, timestamp }) {
     });
   };
 
+  const deleteComment = async(e) => {
+      console.log(e);
+    await deleteDoc(doc(db, "posts", id, "comments",e));
+  };
+
   return (
     <div className=" bg-white my-7 border rounded-sm">
       <div className="flex items-center p-5">
@@ -178,26 +183,25 @@ function Post({ id, username, userImage, img, caption, timestamp }) {
       {comments.length > 0 && (
         <div className="ml-8 min-h-10 max-h-20 overflow-y-scroll scrollbar-thumb-black scrollbar-thin">
           {comments.map((comment) => (
-            <div
-              key={comment.id}
-              className="flex items-center justify-center my-2"
-            >
-              <img
-                src={comment.data().userImage}
-                className="h-7 rounded-full"
-              />
-              <p className="flex-1 ml-3 text-sm">
-                <span className="font-bold pr-2">
-                  {comment.data().username}
-                </span>
-                {comment.data().comment}
-              </p>
-              <p className="grid text-right mr-5 w-fit">
-                  <DotsHorizontalIcon className="h-5 ml-[80%]"/>
-                <Moment fromNow className="text-xs">
-                  {comment.data().timestamp?.toDate()}
-                </Moment>
-              </p>
+            <div key={comment.id}>
+              <div
+                className="flex items-center justify-center mt-2"
+              >
+                <img
+                  src={comment.data().userImage}
+                  className="h-7 rounded-full"
+                />
+                <p className="flex-1 ml-3 text-sm">
+                  <span className="font-bold pr-2">
+                    {comment.data().username}
+                  </span>
+                  {comment.data().comment}
+                </p>
+                {((session.user.username == comment.data().username) || (username == comment.data().username)) && (<TrashIcon className="h-5 mr-5 pl-2 text-gray-400" onClick={()=>deleteComment(comment.id)}/>)}
+              </div>
+              <Moment fromNow className="text-xs ml-10 mb-2">
+                    {comment.data().timestamp?.toDate()}
+                  </Moment>
             </div>
           ))}
         </div>
