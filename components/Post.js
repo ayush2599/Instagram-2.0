@@ -9,6 +9,8 @@ import {
   DotsHorizontalIcon,
   BookmarkIcon,
   EmojiHappyIcon,
+  TrashIcon,
+  PencilAltIcon,
 } from "@heroicons/react/outline";
 
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/solid";
@@ -28,6 +30,7 @@ import { useEffect, useRef, useState } from "react";
 import { db } from "../firebase";
 import Moment from "react-moment";
 import { async } from "@firebase/util";
+import { getStorage, ref, deleteObject } from "firebase/storage";
 
 function Post({ id, username, userImage, img, caption, timestamp }) {
   const { data: session } = useSession();
@@ -36,6 +39,12 @@ function Post({ id, username, userImage, img, caption, timestamp }) {
   const [likes, setLikes] = useState([]);
   const [hasLiked, setHasLiked] = useState([]);
   const { commentField } = useRef();
+  const [postMenu, setPostMenu] = useState();
+  const storage = getStorage();
+
+  const togglePostMenu = () => {
+    setPostMenu(!postMenu);
+  };
 
   useEffect(
     () =>
@@ -75,6 +84,18 @@ function Post({ id, username, userImage, img, caption, timestamp }) {
     }
   };
 
+  const deletePost = async () => {
+    const fileRef = ref(storage, `posts/${id}/image`);
+    await deleteObject(fileRef)
+      .then(() => {
+        console.log("Post Deleted Successfully!");
+      })
+      .catch((error) => {
+        console.log("Error in Post Deletion!", error);
+      });
+    await deleteDoc(doc(db, "posts", id));
+  };
+
   const sendComment = async (e) => {
     e.preventDefault();
 
@@ -92,16 +113,34 @@ function Post({ id, username, userImage, img, caption, timestamp }) {
   return (
     <div className=" bg-white my-7 border rounded-sm">
       <div className="flex items-center p-5">
-          {/* UserImage */}
+        {/* UserImage */}
         <img
           src={userImage}
           className="rounded-full h-12 w-12 object-contain border p-1 mr-3"
           alt=""
         />
         <p className="flex-1 font-bold ">{username}</p>
-        <DotsHorizontalIcon className="h-5" />
-      </div>
 
+        {session.user.username == username && (
+          <div
+            className=" space-x-2 ml-[-55px] py-2  px-5 rounded-md transition duration-200 ease-in"
+            style={{
+              display: postMenu ? "flex" : "none",
+            }}
+          >
+            <PencilAltIcon className=" h-6 w-6 cursor-pointer" />
+            <TrashIcon
+              className=" h-6 w-6 cursor-pointer"
+              onClick={deletePost}
+            />
+          </div>
+        )}
+
+        <DotsHorizontalIcon
+          className="h-5 cursor-pointer"
+          onClick={() => togglePostMenu()}
+        />
+      </div>
       <div className="overflow-hidden">
         <img
           src={img}
@@ -164,7 +203,7 @@ function Post({ id, username, userImage, img, caption, timestamp }) {
       )}
 
       <div className=" text-gray-500 text-xs my-5 mx-5">
-        <Moment fromNow>{timestamp.toDate()}</Moment>
+        <Moment fromNow>{timestamp?.toDate()}</Moment>
       </div>
 
       <form className="flex items-center p-4 border-t">
