@@ -86,13 +86,13 @@ function Post({ id, username, userImage, img, caption, timestamp }) {
 
   const deletePost = async () => {
     const fileRef = ref(storage, `posts/${id}/image`);
-    await deleteObject(fileRef)
-      .then(() => {
-        console.log("Post Deleted Successfully!");
-      })
-      .catch((error) => {
-        console.log("Error in Post Deletion!", error);
-      });
+    // await deleteObject(fileRef)
+    //   .then(() => {
+    //     console.log("Post Deleted Successfully!");
+    //   })
+    //   .catch((error) => {
+    //     console.log("Error in Post Deletion!", error);
+    //   });
     await deleteDoc(doc(db, "posts", id));
   };
 
