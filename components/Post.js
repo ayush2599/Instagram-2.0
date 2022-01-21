@@ -197,7 +197,7 @@ function Post({ id, username, userImage, img, caption, timestamp }) {
                   </span>
                   {comment.data().comment}
                 </p>
-                {((session.user.username == comment.data().username) || (username == comment.data().username)) && (<TrashIcon className="h-5 mr-5 pl-2 text-gray-400" onClick={()=>deleteComment(comment.id)}/>)}
+                {((session.user.username == comment.data().username) || (session.user.username == username)) && (<TrashIcon className="h-5 mr-5 pl-2 text-gray-400" onClick={()=>deleteComment(comment.id)}/>)}
               </div>
               <Moment fromNow className="text-xs ml-10 mb-2">
                     {comment.data().timestamp?.toDate()}
